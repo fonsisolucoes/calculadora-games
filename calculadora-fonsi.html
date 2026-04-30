@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FONSI SOLUÇÕES - Avaliação Profissional</title>
+    <style>
+        :root {
+            --primary: #cc0000; /* Vermelho FONSI */
+            --bg: #f4f4f9; 
+            --card: #ffffff; 
+            --text: #1a1a1a; 
+            --border: #dddddd; 
+        }
+
+        body {
+            font-family: 'Urbanist', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fffafa;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+
+        .result-title {
+            font-size: 13px;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .result-value {
+            font-size: 38px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .btn-whatsapp {
+            display: block;
+            background-color: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-whatsapp:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        hr {
+            border: 0; 
+            border-top: 1px solid var(--border); 
+            margin: 25px 0;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1>FONSI SOLUÇÕES</h1>
+    <p class="subtitle">SISTEMA DE AVALIAÇÃO DE SEMINOVOS</p>
+
+    <div class="form-group">
+        <label>Selecione o Console</label>
+        <select id="consoleSelect" onchange="mudarConsole()">
+            <option value="ps4">PlayStation 4</option>
+            <option value="ps5">PlayStation 5</option>
+            <option value="switch">Nintendo Switch</option>
+            <option value="ps3">PlayStation 3</option>
+        </select>
+    </div>
+
+    <hr>
+
+    <div id="camposDinamicos"></div>
+
+    <div class="result-box">
+        <div class="result-title">Oferta FONSI SOLUÇÕES:</div>
+        <div id="valorFinal" class="result-value">R$ 0,00</div>
+        <a href="#" id="linkZap" target="_blank" class="btn-whatsapp">
+            VENDER AGORA NO WHATSAPP
+        </a>
+    </div>
+</div>
+
+<script>
+    const DATA = {
+        ps4: {
+            base: 950,
+            perguntas: [
+                { label: "Modelo", id: "mod", options: [{ n: "Slim", d: 0 }, { n: "Fat", d: 200 }] },
+                { label: "HD", id: "hd", options: [{ n: "1TB", d: 0 }, { n: "500GB", d: 100 }] },
+                { label: "Controle", id: "ctrl", options: [{ n: "Original", d: 0 }, { n: "S/ Original", d: 150 }] },
+                { label: "Drive", id: "drv", options: [{ n: "OK", d: 0 }, { n: "Defeito", d: 300 }] },
+                { label: "WiFi/BT", id: "net", options: [{ n: "OK", d: 0 }, { n: "Defeito", d: 450 }] }
+            ]
+        },
+        ps5: {
+            base: 2400,
+            perguntas: [
+                { label: "Versão", id: "ver", options: [{ n: "Mídia Física", d: 0 }, { n: "Digital", d: 300 }] },
+                { label: "Modelo", id: "mod", options: [{ n: "Slim", d: 0 }, { n: "Fat", d: 200 }] },
+                { label: "Controle", id: "ctrl", options: [{ n: "Original", d: 0 }, { n: "C/ Drift / Ruim", d: 150 }] }
+            ]
+        },
+        switch: {
+            base: 1800,
+            perguntas: [
+                { label: "Modelo", id: "mod", options: [{ n: "OLED", d: 0 }, { n: "V2 / V1", d: 400 }, { n: "Lite", d: 800 }] },
+                { label: "Versão", id: "ver", options: [{ n: "Destravado", d: 0 }, { n: "Travado", d: 400 }] },
+                { label: "Cartão de Memória", id: "mem", options: [{ n: "Não", d: 0 }, { n: "128GB", d: -50 }, { n: "256GB", d: -100 }] },
+                { label: "Joy-Cons", id: "joy", options: [{ n: "Perfeito", d: 0 }, { n: "Com Drift", d: 140 }] },
+                { label: "Acessórios", id: "acc", options: [{ n: "Completo", d: 0 }, { n: "Sem Dock", d: 300 }] },
+                { label: "Com Caixa", id: "cai", options: [{ n: "Sim", d: 0 }, { n: "Não", d: 100 }] }
+            ]
+        },
+        ps3: {
+            base: 500,
+            perguntas: [
+                { label: "Modelo", id: "mod", options: [{ n: "Super Slim", d: 0 }, { n: "Slim", d: 100 }] },
+                { label: "Armazenamento", id: "hd", options: [{ n: "HD Grande", d: 0 }, { n: "HD Pequeno", d: 80 }] },
+                { label: "Cabo/Controle", id: "acc", options: [{ n: "Tudo OK", d: 0 }, { n: "Sem Cabos/Controle", d: 90 }] }
+            ]
+        }
+    };
+
+    function mudarConsole() {
+        const consoleKey = document.getElementById('consoleSelect').value;
+        const config = DATA[consoleKey];
+        const container = document.getElementById('camposDinamicos');
+        
+        container.innerHTML = config.perguntas.map(p => `
+            <div class="form-group">
+                <label>${p.label}</label>
+                <select class="input-calculo" data-label="${p.label}" onchange="calcular()">
+                    ${p.options.map(o => `<option value="${o.d}">${o.n}</option>`).join('')}
+                </select>
+            </div>
+        `).join('');
+
+        calcular();
+    }
+
+    function calcular() {
+        const consoleKey = document.getElementById('consoleSelect').value;
+        let valor = DATA[consoleKey].base;
+        let resumo = `Olá fiz a avaliaçao no site, gostaria de vender meu ${consoleKey.toUpperCase()}:\n`;
+
+        const inputs = document.querySelectorAll('.input-calculo');
+        inputs.forEach(input => {
+            valor -= parseInt(input.value);
+            const label = input.getAttribute('data-label');
+            const opcaoNome = input.options[input.selectedIndex].text;
+            resumo += `- ${label}: ${opcaoNome}\n`;
+        });
+
+        if (valor < 0) valor = 0;
+
+        document.getElementById('valorFinal').innerText = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        resumo += `\nValor Avaliado: R$ ${valor}`;
+        const encoded = encodeURIComponent(resumo);
+        document.getElementById('linkZap').href = `https://wa.me/5511986818738?text=${encoded}`;
+    }
+
+    mudarConsole();
+</script>
+
+</body>
+</html>
